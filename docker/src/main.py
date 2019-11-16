@@ -6,13 +6,10 @@ import select
 import psycopg2
 from psycopg2 import sql
 import json
-import time
-import pprint
 import select
 import logging
 import requests
 from utils.config import get_config
-from pprint import pprint
 
 CONFIG_TEMPLATE = (
     ("PG_HOST", "localhost", False),
@@ -45,7 +42,6 @@ conn.autocommit = True
 curs = conn.cursor()
 
 logging.debug("Start listening channel %s" % config["PG_CHANNEL"])
-# curs.execute('LISTEN pgnotifyfwd');
 curs.execute(sql.SQL('LISTEN {};').format(sql.Identifier(config["PG_CHANNEL"])))
 
 logging.debug("Waiting for notifications on channel %s" % config["PG_CHANNEL"])
@@ -60,13 +56,11 @@ while True:
             logging.debug("Got NOTIFY: %s %s %s", notify.pid, notify.channel, notify.payload)
             try:
                 payload = json.loads(notify.payload)
-                r = requests.post(config["PUBURL"]+('?id=%s' % payload["channel"]), data=payload["data"]+"\n")
+                r = requests.post(config["PUBURL"]+('?id=%s' % payload["channel"]), data=payload["data"]+"\r\n")
 
                 if r.status_code != 200:
                     logging.error("Notification not published, server returns status code: %s", r.status_code)
-
             except json.JSONDecodeError as e:
                 logging.error('JSON decode error: %s' % e)
             except Exception as e:
-                exc_type, exc_value = sys.exc_info()
-                logging.error('Exception: %s %s' % (exc_type,exc_value))
+                logging.error('Exception: %s' % e)
