@@ -56,7 +56,7 @@ while True:
             logging.debug("Got NOTIFY: %s %s %s", notify.pid, notify.channel, notify.payload)
             try:
                 payload = json.loads(notify.payload)
-                r = requests.post(config["PUBURL"]+('?id=%s' % payload["channel"]), data=payload["data"]+"\r\n")
+                r = requests.post(config["PUBURL"]+('?id=%s' % payload["channel"]), data=payload["data"]+"\r\n", timeout=2)
 
                 if r.status_code != 200:
                     logging.error("Notification not published, server returns status code: %s", r.status_code)
