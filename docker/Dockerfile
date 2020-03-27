@@ -11,14 +11,14 @@ RUN apk -U --no-cache add \
   su-exec && \
   rm -rf /var/cache/*
 
-ADD requirements.txt /opt/requirements.txt
-RUN pip install -r /opt/requirements.txt
+ADD docker/requirements.txt /opt/requirements.txt
+RUN pip3 install -r /opt/requirements.txt
 
 RUN apk del .build-deps
 
-ADD ./src /opt/app
+ADD ./docker/src /opt/app
 
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY docker/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
