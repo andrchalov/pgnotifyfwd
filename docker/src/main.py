@@ -58,7 +58,7 @@ while True:
                 payload = json.loads(notify.payload)
                 r = requests.post(config["PUBURL"]+('?id=%s' % payload["channel"]), data=payload["data"]+"\r\n", timeout=2)
 
-                if r.status_code != 200:
+                if r.status_code < 200 or r.status_code >= 300:
                     logging.error("Notification not published, server returns status code: %s", r.status_code)
             except json.JSONDecodeError as e:
                 logging.error('JSON decode error: %s' % e)
