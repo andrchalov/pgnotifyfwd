@@ -12,7 +12,7 @@ RUN apk -U --no-cache add \
   rm -rf /var/cache/*
 
 ADD requirements.txt /opt/requirements.txt
-RUN pip3 install -r /opt/requirements.txt
+RUN pip install -r /opt/requirements.txt
 
 RUN apk del .build-deps
 
